@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Products</title>
+</head>
+<body>
+  <h2>🛍️ Product List</h2>
+  <div id="products"></div>
+
+  <script>
+    async function fetchProducts() {
+      try {
+        const res = await fetch('https://adaptnxt-1.onrender.com/api/products');
+        const products = await res.json();
+
+        const container = document.getElementById('products');
+        container.innerHTML = '';
+
+        products.forEach(p => {
+          const div = document.createElement('div');
+          div.innerHTML = `
+            <hr>
+            <h3>${p.name}</h3>
+            <p>${p.description}</p>
+            <p><strong>Price:</strong> ₹${p.price}</p>
+            <p><strong>Category:</strong> ${p.category}</p>
+            <button onclick="addToCart('${p._id}')">Add to Cart</button>
+          `;
+          container.appendChild(div);
+        });
+      } catch (err) {
+        console.error(err);
+        alert('❌ Failed to load products');
+      }
+    }
+
+    function addToCart(productId) {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const existing = cart.find(item => item.productId === productId);
+      if (existing) {
+        existing.quantity += 1;
+      } else {
+        cart.push({ productId, quantity: 1 });
+      }
+      localStorage.setItem('cart', JSON.stringify(cart));
+      alert('✅ Product added to cart');
+    }
+
+    fetchProducts();
+  </script>
+</body>
+</html>

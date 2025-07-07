@@ -1,0 +1,35 @@
+<h2>📦 My Orders</h2>
+<div id="orderList"></div>
+
+<script>
+  async function loadOrders() {
+    const token = localStorage.getItem('token');
+    if (!token) return alert('❌ Login required');
+
+    const res = await fetch('https://adaptnxt-1.onrender.com/api/orders/my-orders', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    const orders = await res.json();
+    const container = document.getElementById('orderList');
+    container.innerHTML = '';
+
+    orders.forEach(order => {
+      const items = order.items.map(i =>
+        `<li>${i.productId.name} × ${i.quantity} (₹${i.productId.price})</li>`
+      ).join('');
+
+      container.innerHTML += `
+        <div>
+          <hr>
+          <h4>Order ID: ${order._id}</h4>
+          <ul>${items}</ul>
+          <p><strong>Total:</strong> ₹${order.totalAmount}</p>
+          <p><strong>Status:</strong> ${order.status}</p>
+        </div>
+      `;
+    });
+  }
+
+  loadOrders();
+</script>

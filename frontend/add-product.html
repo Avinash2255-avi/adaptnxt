@@ -1,0 +1,48 @@
+<h2>➕ Add Product (Admin Only)</h2>
+<form id="productForm">
+  <input type="text" id="name" placeholder="Product Name" required /><br />
+  <input type="text" id="description" placeholder="Description" required /><br />
+  <input type="number" id="price" placeholder="Price" required /><br />
+  <input type="text" id="category" placeholder="Category" required /><br />
+  <button type="submit">Add Product</button>
+</form>
+
+<div id="addProductMsg"></div>
+
+<script>
+  document.getElementById('productForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const token = localStorage.getItem('token');
+    if (!token) return alert('❌ Login required');
+
+    const body = {
+      name: document.getElementById('name').value,
+      description: document.getElementById('description').value,
+      price: +document.getElementById('price').value,
+      category: document.getElementById('category').value,
+    };
+
+    try {
+      const res = await fetch('https://adaptnxt-1.onrender.com/api/products/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(body)
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        document.getElementById('addProductMsg').innerHTML = '✅ Product added!';
+      } else {
+        document.getElementById('addProductMsg').innerHTML = `❌ ${data.message}`;
+      }
+    } catch (err) {
+      console.error(err);
+      document.getElementById('addProductMsg').innerHTML = '❌ Request failed';
+    }
+  });
+</script>

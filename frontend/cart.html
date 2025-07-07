@@ -1,0 +1,69 @@
+<h2>🛒 Cart</h2>
+<div id="cartContainer"></div>
+<button onclick="placeOrder()">Place Order</button>
+
+<script>
+  async function loadCart() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const container = document.getElementById('cartContainer');
+    container.innerHTML = '';
+
+    let total = 0;
+
+    for (const item of cart) {
+      const res = await fetch(`https://adaptnxt-1.onrender.com/api/products/${item.productId}`);
+      const product = await res.json();
+      total += product.price * item.quantity;
+
+      container.innerHTML += `
+        <hr>
+        <p><strong>${product.name}</strong> - ₹${product.price} × ${item.quantity}</p>
+        <button onclick="removeItem('${item.productId}')">Remove</button>
+      `;
+    }
+
+    container.innerHTML += `<h3>Total: ₹${total}</h3>`;
+  }
+
+  function removeItem(id) {
+    let cart = JSON.parse(localStorage.getItem('cart'));
+    cart = cart.filter(item => item.productId !== id);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    loadCart();
+  }
+
+  async function placeOrder() {
+    const token = localStorage.getItem('token');
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    if (!token) return alert('❌ Login required');
+    if (cart.length === 0) return alert('❌ Cart is empty');
+
+    let totalAmount = 0;
+    for (const item of cart) {
+      const res = await fetch(`https://adaptnxt-1.onrender.com/api/products/${item.productId}`);
+      const product = await res.json();
+      totalAmount += product.price * item.quantity;
+    }
+
+    const res = await fetch('https://adaptnxt-1.onrender.com/api/orders/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ items: cart, totalAmount })
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      alert('✅ Order placed!');
+      localStorage.removeItem('cart');
+      loadCart();
+    } else {
+      alert(`❌ ${data.error || data.message}`);
+    }
+  }
+
+  loadCart();
+</script>

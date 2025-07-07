@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login</title>
+</head>
+<body>
+  <h2>Login</h2>
+  <form id="loginForm">
+    <input type="email" id="email" placeholder="Email" required /><br />
+    <input type="password" id="password" placeholder="Password" required /><br />
+    <button type="submit">Login</button>
+  </form>
+
+  <div id="result"></div>
+
+  <script>
+    const form = document.getElementById('loginForm');
+    const resultDiv = document.getElementById('result');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        const res = await fetch('https://adaptnxt-1.onrender.com/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          resultDiv.innerHTML = `<p style="color:green;">✅ Logged in! Token: ${data.token}</p>`;
+          // Save the token if you want to use it later:
+          localStorage.setItem('token', data.token);
+        } else {
+          resultDiv.innerHTML = `<p style="color:red;">❌ ${data.message || 'Login failed'}</p>`;
+        }
+      } catch (error) {
+        resultDiv.innerHTML = `<p style="color:red;">⚠️ Error: ${error.message}</p>`;
+      }
+    });
+  </script>
+</body>
+</html>
