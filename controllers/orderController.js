@@ -29,7 +29,7 @@ exports.createOrder = async (req, res) => {
 exports.getMyOrders = async (req, res) => {
   try {
     const orders = await Order.find({ user: req.user.id })
-      .populate('items.product', 'name price');
+      .populate('items.productId', 'name price'); // ✅ corrected field name
 
     res.status(200).json(orders);
   } catch (error) {
@@ -37,6 +37,7 @@ exports.getMyOrders = async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch orders' });
   }
 };
+
 exports.getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find().populate('user', 'name email').populate('items.productId', 'name price');
