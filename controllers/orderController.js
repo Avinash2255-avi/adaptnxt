@@ -1,12 +1,9 @@
 const Order = require('../models/Order');
 
-// @desc   Create a new order
-// @route  POST /api/orders/create
-// @access Private
 exports.createOrder = async (req, res) => {
   const { items, totalAmount } = req.body;
 
-  // Basic validation
+
   if (!items || !Array.isArray(items) || items.length === 0 || !totalAmount) {
     return res.status(400).json({ message: 'Items and totalAmount are required' });
   }
@@ -28,9 +25,7 @@ exports.createOrder = async (req, res) => {
   }
 };
 
-// @desc   Get orders for logged-in user
-// @route  GET /api/orders/my-orders
-// @access Private
+
 exports.getMyOrders = async (req, res) => {
   try {
     const orders = await Order.find({ user: req.user.id })

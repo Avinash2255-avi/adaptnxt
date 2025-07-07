@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const generateToken = require('../utils/generateToken');
 
-// @desc Register user
+
 exports.register = async (req, res) => {
   const { name, email, password, role } = req.body;
 
@@ -13,7 +13,7 @@ exports.register = async (req, res) => {
       name,
       email,
       password,
-      role: role || 'customer' // default to 'customer' if role not provided
+      role: role || 'customer' 
     });
 
     res.status(201).json({
@@ -28,7 +28,7 @@ exports.register = async (req, res) => {
   }
 };
 
-// @desc Login user
+
 exports.login = async (req, res) => {
   const { email, password } = req.body;
 

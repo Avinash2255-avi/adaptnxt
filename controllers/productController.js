@@ -1,6 +1,6 @@
 const Product = require('../models/Product');
 
-// @desc Create a new product (Admin only)
+
 exports.createProduct = async (req, res) => {
   try {
     const { name, description, price, category } = req.body;
@@ -23,7 +23,7 @@ exports.createProduct = async (req, res) => {
   }
 };
 
-// @desc Get all products (Public)
+
 exports.getAllProducts = async (req, res) => {
   try {
     const products = await Product.find();
